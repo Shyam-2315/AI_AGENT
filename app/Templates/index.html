@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>College Chatbot</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+  <div class="bg-white shadow-lg rounded-lg w-full max-w-md p-6">
+    <h2 class="text-2xl font-semibold text-center mb-4">🎓 College Chatbot</h2>
+
+    <div id="chatBox" class="h-80 overflow-y-auto border p-3 mb-4 rounded bg-gray-50 text-sm"></div>
+
+    <form id="chatForm" class="flex space-x-2">
+      <input id="messageInput" type="text" class="flex-1 border rounded px-3 py-2" placeholder="Ask your question..." required />
+      <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Send</button>
+    </form>
+  </div>
+
+  <script>
+    const form = document.getElementById('chatForm');
+    const input = document.getElementById('messageInput');
+    const chatBox = document.getElementById('chatBox');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const userMsg = input.value;
+      addMessage("👤 You", userMsg);
+      input.value = '';
+
+      const res = await fetch('/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: userMsg })
+      });
+
+      const data = await res.json();
+      addMessage("🤖 Bot", data.response);
+    });
+
+    function addMessage(sender, message) {
+      const msgEl = document.createElement('div');
+      msgEl.innerHTML = `<strong>${sender}:</strong> ${message}`;
+      chatBox.appendChild(msgEl);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+  </script>
+</body>
+</html>

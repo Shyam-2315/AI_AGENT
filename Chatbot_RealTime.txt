@@ -1,0 +1,22 @@
+from openai import OpenAI
+
+
+client = OpenAI(
+    api_key="sk-44b1f58d2e804bf2b0adf0697b32f627",
+    base_url="https://api.deepseek.com/v1"  # 👈 Replace with DeepSeek's actual base URL
+)
+
+def generate_response(message: str) -> str:
+    try:
+        response = client.chat.completions.create(
+            model="deepseek-reasoner",  # or "gpt-4"
+            messages=[
+                {"role": "system", "content": "You are a helpful college assistant. Answer student questions clearly and politely."},
+                {"role": "user", "content": message}
+            ],
+            temperature=0.6,
+            max_tokens=500
+        )
+        return response.choices[0].message.content.strip()
+    except Exception as e:
+        return f"Error: {str(e)}"
